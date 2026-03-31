@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "ScreenShot - Full Page Capture",
+  "short_name": "ScreenShot",
+  "version": "1.1.0",
+  "description": "Capture full-length screenshots of any webpage in one click. Supports PNG download and clipboard copy. Works on dynamic & lazy-loaded pages.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "downloads",
+    "debugger",
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ScreenShot - Full Page Capture",
+    "default_icon": {
+      "16": "images/icon16.png",
+      "48": "images/icon48.png",
+      "128": "images/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "images/icon16.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}
