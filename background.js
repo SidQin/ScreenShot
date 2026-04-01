@@ -21,7 +21,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       func: injectPreviewOverlay,
       args: [dataUrl]
     }).then(() => sendResponse({ success: true }))
-      .catch(err => sendResponse({ success: false, error: err.message }));
+      .catch(err => {
+        console.error('[Background] 预览脚本注入失败:', err);
+        sendResponse({ success: false, error: err.message });
+      });
     return true;
   }
 
@@ -401,10 +404,6 @@ async function downloadImage(dataUrl, filename) {
   }
 }
 
-// ══════════════════════════════════════════
-// 注入到目标页面的全屏预览弹窗函数
-// （此函数通过 chrome.scripting.executeScript 注入，运行在页面上下文中）
-// ══════════════════════════════════════════
 function injectPreviewOverlay(dataUrl) {
   const OVERLAY_ID = '__ss_preview_overlay__';
 

@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "ScreenShot - Full Page Capture",
   "short_name": "ScreenShot",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Capture full-length screenshots of any webpage in one click. Supports PNG download and clipboard copy. Works on dynamic & lazy-loaded pages.",
   "permissions": [
     "activeTab",

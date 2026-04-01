@@ -96,14 +96,31 @@ document.addEventListener('DOMContentLoaded', function () {
   /* 全屏预览：注入被截图页面 */
   const previewWrap = document.getElementById('preview-wrap');
 
-  /* ── 从预览返回时恢复结果页 ── */
-  chrome.storage.session.get(['ss_restore_preview', 'ss_preview_data'], (result) => {
-    if (result.ss_restore_preview && result.ss_preview_data) {
-      // 清除恢复标记
-      chrome.storage.session.remove('ss_restore_preview');
-      currentImageData = result.ss_preview_data;
-      showResultView(result.ss_preview_data);
-    }
+  /* 当前截图的 dataURL，供下载和复制使用 */
+  let currentImageData = null;
+  /* 当前活跃的标签页 */
+  let currentTab = null;
+  /* 用户选择的额外滚动轮次 */
+  let selectedRounds = 0;
+
+  /* ── 从预览返回时恢复结果页（仅当仍在同一标签页时） ── */
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const activeTab = tabs && tabs[0];
+    chrome.storage.session.get(['ss_restore_preview', 'ss_preview_data', 'ss_preview_tab_id'], (result) => {
+      const sameTab = activeTab && result.ss_preview_tab_id === activeTab.id;
+      if (result.ss_preview_data && sameTab) {
+        // 当前 tab 与截图 tab 一致，恢复结果页
+        currentImageData = result.ss_preview_data;
+        currentTab = activeTab;
+        showResultView(result.ss_preview_data);
+        if (result.ss_restore_preview) {
+          chrome.storage.session.remove('ss_restore_preview');
+        }
+      } else if (!sameTab) {
+        // 切换了标签页，清除旧的截图缓存，展示初始界面
+        chrome.storage.session.remove(['ss_preview_data', 'ss_preview_tab_id', 'ss_restore_preview']);
+      }
+    });
   });
 
   async function openFullPreview() {
@@ -124,13 +141,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const infiniteCancelBtn  = document.getElementById('infinite-cancel-btn');
   const infiniteConfirmBtn = document.getElementById('infinite-confirm-btn');
   const roundCards         = document.querySelectorAll('.round-card');
-
-  /* 当前截图的 dataURL，供下载和复制使用 */
-  let currentImageData = null;
-  /* 当前活跃的标签页 */
-  let currentTab = null;
-  /* 用户选择的额外滚动轮次 */
-  let selectedRounds = 0;
 
   /* ── 轮次选择卡片交互 ── */
   roundCards.forEach(card => {
@@ -246,8 +256,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
       /* 展示结果界面 */
       currentImageData = imageData;
-      // 存入 session，供预览弹窗关闭后恢复使用
-      try { chrome.storage.session.set({ ss_preview_data: imageData }); } catch (_) {}
+      // 存入 session，供预览弹窗关闭后恢复使用（同时记录 tabId，避免切换标签页后误恢复）
+      try { chrome.storage.session.set({ ss_preview_data: imageData, ss_preview_tab_id: currentTab ? currentTab.id : null }); } catch (_) {}
       showResultView(imageData);
 
     } catch (error) {
