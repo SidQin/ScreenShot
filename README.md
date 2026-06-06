@@ -1,19 +1,22 @@
 # ScreenShot - Full Page Capture
 
-一键截取完整网页长图的 Chrome 扩展，支持 PNG 下载和复制到剪切板。
+一键截取完整网页长图的 Chrome 扩展，支持区域截图、在线文档截图、PNG/JPEG 下载和复制到剪切板。
 
-> Capture full-length screenshots of any webpage in one click. Supports PNG download and clipboard copy.
+> Full-page & region screenshot tool. Supports PNG/JPEG, clipboard copy, smart scrollable-area detection, infinite-scroll capture and in-page preview.
 
 ## ✨ 功能特点
 
 - 📸 **全页截图**：使用 Chrome DevTools Protocol，一次性截取完整网页，无拼接错位
-- 🔍 **全屏预览**：截图完成后可放大预览，支持滚轮缩放、拖拽平移、键盘快捷键（ESC/+/-/0/1）
-- 🦥 **懒加载支持**：截图前自动预滚动，触发懒加载内容，确保页面底部内容完整显示
+- 🎯 **区域截图**：自动检测页面上所有可滚动区域，选择即可精确截取指定区域
+- 📄 **在线文档截图**：支持钉钉文档、腾讯文档等 Canvas 虚拟滚动应用的截图（自动检测冻结表头并跳过）
 - ♾️ **无限滚动支持**：检测到无限滚动页面时，可选择额外加载轮次再截图
-- 📥 **高清下载**：保存为高质量 PNG，文件名自动带时间戳
+- 🔍 **全屏预览**：截图完成后可放大预览，支持滚轮缩放、拖拽平移、键盘快捷键（ESC/+/-/0/1）
+- 🖼️ **格式选择**：支持 PNG / JPEG 切换 + 图片质量滑块
+- 🦥 **懒加载支持**：截图前自动预滚动，触发懒加载内容，确保页面底部内容完整显示
+- 📥 **高清下载**：保存为高质量图片，文件名自动带时间戳
 - 📋 **一键复制**：复制到剪切板，方便直接粘贴
+- ⌨️ **键盘快捷键**：Alt+Shift+S 一键整页截图
 - 🎨 **双主题 UI**：支持液态玻璃 / 经典渐变 / 跟随系统三种界面风格
-- ⚡ **快速处理**：基于 CDP `Emulation.setDeviceMetricsOverride`，无需分段拼接
 
 ## 安装方法
 
@@ -32,21 +35,24 @@
 ## 使用方法
 
 1. 打开需要截图的网页，等待页面加载完成
-2. 点击浏览器工具栏的 **ScreenShot** 图标
-3. 点击 **🎯 开始截图**
-4. 截图完成后，选择：
+2. 点击浏览器工具栏的 **ScreenShot** 图标，或按 `Alt+Shift+S` 快捷键
+3. 选择截图模式：
+   - **📄 整页截图**：自动截取完整页面
+   - **🎯 区域截图**：从检测到的可滚动区域列表中选择，或手动框选指定区域
+4. 在线文档截图自动适配（钉钉文档、腾讯文档等 Canvas 应用）
+5. 截图完成后，可选择：
    - **🔍 放大预览**：在当前页面全屏预览，支持缩放、拖拽（关闭后自动恢复截图面板）
-   - **📥 下载图片**：保存到本地，自动命名为 `ScreenShot_YYYY-MM-DD_HH-MM-SS.png`
+   - **📥 下载图片**：保存到本地，可切换 PNG/JPEG 格式
    - **📋 复制到剪切板**：直接粘贴到其他应用
 
 ## 文件结构
 
 ```
 ScreenShot/
-├── manifest.json       # 扩展配置
-├── background.js       # Service Worker（CDP 截图核心）
-├── popup.html          # 弹出界面
-├── popup.js            # 界面逻辑 + 图片处理
+├── manifest.json       # 扩展配置（含快捷键设置）
+├── background.js       # Service Worker（CDP 截图 + 虚拟滚动 Canvas 截图核心）
+├── popup.html          # 弹出界面（含主题切换、格式选择）
+├── popup.js            # 界面逻辑 + 图片处理 + IndexedDB 存储
 └── images/
     ├── icon16.png
     ├── icon48.png
@@ -58,10 +64,10 @@ ScreenShot/
 | 权限 | 用途 |
 |------|------|
 | `activeTab` | 获取当前标签页信息 |
-| `scripting` | 注入脚本控制页面滚动、隐藏 fixed 元素 |
+| `scripting` | 注入脚本控制页面滚动、检测可滚动区域 |
 | `downloads` | 保存截图到本地 |
-| `debugger` | 使用 CDP `Page.captureScreenshot` 和 `Emulation.setDeviceMetricsOverride` 实现全页截图 |
-| `storage` | 记住用户的主题偏好设置 |
+| `debugger` | 使用 CDP `Page.captureScreenshot` 和 `Input.dispatchKeyEvent` 实现截图和键盘滚动 |
+| `storage` | 记住用户的主题偏好设置 + IndexedDB 存储截图数据 |
 
 ## 注意事项
 
@@ -75,6 +81,9 @@ ScreenShot/
 **Q: 截图底部内容是骨架屏 / 空白？**  
 A: 已内置懒加载预滚动机制，截图前会自动滚动全页触发内容加载。如仍有问题，等页面完全加载后再截图。
 
+**Q: 在线文档（钉钉/腾讯文档）截图有问题？**  
+A: 已自动适配 Canvas 虚拟滚动应用。如果出现表头重复、黑块等问题，请确保扩展为最新版本（v1.2.0+）。
+
 **Q: 是无限滚动页面，想截更多内容？**  
 A: 检测到无限滚动时会弹出选择弹层，可选 3 / 5 / 10 轮额外加载后再截图。
 
@@ -86,11 +95,17 @@ A: 文件名格式为 `ScreenShot_YYYY-MM-DD_HH-MM-SS.png`，请确保扩展已�
 
 ## 更新日志
 
-### v1.1.1
-- 修复全屏预览可重复打开，关闭预览后可稳定恢复截图结果页
-- 修复从预览返回后 `currentTab` 丢失导致首次再次预览无响应的问题
-- 修复切换到其他标签页后仍误恢复上一次截图结果的问题
-- 清理无效的旧预览注入实现，发版包保持更干净
+### v1.2.0
+- 🎯 **区域截图**：自动检测页面上所有可滚动区域，支持钉钉文档/腾讯文档等 Canvas 虚拟滚动截图
+- 📄 **在线文档支持**：7 层智能滚动触发级联（jsWheel→cdpWheel→keyboard→touch→pointer→internal），自动适配不同 Canvas 渲染引擎
+- 🖼️ **格式选择**：PNG / JPEG 切换 + 图片质量滑块
+- ⌨️ **快捷键**：Alt+Shift+S 一键整页截图
+- 🛑 **取消按钮**：截图过程中可随时取消
+- 🧠 **冻结表头跳过**：自动检测在线文档的冻结表头高度，拼接时跳过避免重复
+- ⏳ **异步渲染等待**：滚动后自动等待 Canvas 渲染稳定（轮询像素变化），解决腾讯文档空白帧问题
+- 🚫 **尾部空白优化**：连续空白帧加速退出，避免多余截图
+- 🔧 **存储升级**：预览数据改用 IndexedDB，突破 chrome.storage.session 配额限制
+- 🐛 **修复**：偏移匹配阈值放宽、暗色帧检测、表头重复、黑块叠加等问题
 
 ### v1.1.0
 - 新增全屏预览功能：点击缩略图在当前页面全屏查看，支持滚轮缩放、拖拽平移、双击切换适应/原始尺寸
