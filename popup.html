@@ -533,12 +533,129 @@
       text-align: center;
       display: none;
       transition: all 0.2s;
+      white-space: pre-line;
+      line-height: 1.6;
     }
 
     .status.show    { display: block; }
     .status.success { background: rgba(76, 175, 80, 0.3); }
     .status.error   { background: rgba(244, 67, 54, 0.3); }
     .status.info    { background: rgba(33, 150, 243, 0.3); }
+
+    /* 取消截图按钮 */
+    .cancel-btn {
+      margin-top: 10px;
+      width: 100%;
+      padding: 10px;
+      background: rgba(255, 59, 48, 0.2);
+      color: white;
+      border: 1.5px solid rgba(255, 59, 48, 0.5);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+      display: none;
+    }
+
+    .cancel-btn:hover {
+      background: rgba(255, 59, 48, 0.4);
+      border-color: rgba(255, 59, 48, 0.7);
+    }
+
+    body.theme-glass .cancel-btn {
+      background: rgba(255, 59, 48, 0.12);
+      color: #c0392b;
+      border-color: rgba(255, 59, 48, 0.35);
+    }
+
+    body.theme-glass .cancel-btn:hover {
+      background: rgba(255, 59, 48, 0.22);
+      border-color: rgba(255, 59, 48, 0.55);
+    }
+
+    /* ───── 图片格式选择 ───── */
+    .format-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .format-label {
+      font-size: 12px;
+      opacity: 0.75;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    .format-btns {
+      display: flex;
+      gap: 5px;
+    }
+
+    .fmt-btn {
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.1);
+      color: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.03em;
+    }
+
+    .fmt-btn:hover { background: rgba(255,255,255,0.22); }
+
+    .fmt-btn.selected {
+      background: rgba(255,255,255,0.9);
+      color: #5a4fcf;
+      border-color: rgba(255,255,255,0.9);
+    }
+
+    .quality-wrap {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex: 1;
+    }
+
+    .quality-label {
+      font-size: 11px;
+      opacity: 0.7;
+      flex-shrink: 0;
+    }
+
+    .quality-range {
+      flex: 1;
+      accent-color: white;
+      height: 3px;
+      cursor: pointer;
+    }
+
+    .quality-val {
+      font-size: 11px;
+      min-width: 28px;
+      text-align: right;
+      opacity: 0.85;
+    }
+
+    /* 液态玻璃适配 */
+    body.theme-glass .fmt-btn {
+      border-color: rgba(0,0,0,0.15);
+      background: rgba(0,0,0,0.06);
+      color: #1d1d1f;
+    }
+    body.theme-glass .fmt-btn:hover { background: rgba(0,0,0,0.1); }
+    body.theme-glass .fmt-btn.selected {
+      background: rgba(0,122,255,0.88);
+      color: white;
+      border-color: rgba(0,122,255,0.6);
+    }
+    body.theme-glass .quality-range { accent-color: #0071e3; }
 
     /* ───── 截图完成：结果界面 ───── */
     .result-title {
@@ -813,6 +930,200 @@
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
+
+    /* ═══════════════════════════════════════════
+       可滚动区域选择视图（view-select）
+    ═══════════════════════════════════════════ */
+    #view-select {
+      display: none;
+      padding: 6px 16px 14px;
+      flex-direction: column;
+    }
+
+    /* 区域列表区 */
+    .select-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      opacity: 0.65;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .regions-list {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 6px;
+      margin-bottom: 12px;
+      max-height: 180px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.2) transparent;
+      flex-shrink: 0;
+    }
+
+    .regions-list::-webkit-scrollbar       { width: 4px; }
+    .regions-list::-webkit-scrollbar-track { background: transparent; }
+    .regions-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+
+    .region-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      transition: background 0.15s, border-color 0.15s, transform 0.15s;
+      margin-bottom: 2px;
+      gap: 10px;
+      user-select: none;
+    }
+
+    .region-item:last-child { margin-bottom: 0; }
+
+    .region-item:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateX(2px);
+    }
+
+    .region-item.selected {
+      background: rgba(0,122,255,0.18);
+      border-color: rgba(0,122,255,0.55);
+    }
+
+    .region-item-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      width: 20px;
+      text-align: center;
+    }
+
+    .region-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .region-item-title {
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .region-item-meta {
+      font-size: 10px;
+      opacity: 0.6;
+      margin-top: 1px;
+    }
+
+    .region-item-check {
+      font-size: 14px;
+      flex-shrink: 0;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .region-item.selected .region-item-check { opacity: 1; }
+
+    /* 截图模式选择区 */
+    .mode-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      opacity: 0.65;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .mode-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .mode-btn {
+      padding: 12px 8px;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 2px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.08);
+      color: inherit;
+      text-align: center;
+      transition: all 0.2s cubic-bezier(0.16,1,0.3,1);
+      user-select: none;
+    }
+
+    .mode-btn:hover { background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.35); }
+
+    .mode-btn.selected {
+      background: rgba(0,122,255,0.20);
+      border-color: rgba(0,122,255,0.65);
+    }
+
+    .mode-btn-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+    .mode-btn-label { font-size: 12px; font-weight: 600; display: block; }
+    .mode-btn-desc  { font-size: 10px; opacity: 0.65; display: block; margin-top: 2px; }
+
+    /* 操作按钮区 */
+    .select-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-select-cancel {
+      flex: 1;
+      padding: 10px;
+      background: rgba(255,255,255,0.1);
+      color: inherit;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+
+    .btn-select-cancel:hover { background: rgba(255,255,255,0.2); }
+
+    .btn-select-confirm {
+      flex: 2;
+      padding: 10px;
+      background: white;
+      color: #5a4fcf;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .btn-select-confirm:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    }
+
+    .btn-select-confirm:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* 液态玻璃主题适配 */
+    body.theme-glass .regions-list   { background: rgba(0,0,0,0.05); }
+    body.theme-glass .region-item:hover { background: rgba(0,0,0,0.07); }
+    body.theme-glass .region-item.selected { background: rgba(0,122,255,0.12); border-color: rgba(0,122,255,0.45); }
+    body.theme-glass .mode-btn       { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.12); color: #1d1d1f; }
+    body.theme-glass .mode-btn:hover { background: rgba(0,0,0,0.09); }
+    body.theme-glass .mode-btn.selected { background: rgba(0,122,255,0.12); border-color: rgba(0,122,255,0.45); }
+    body.theme-glass .btn-select-cancel { background: rgba(0,0,0,0.06); color: #1d1d1f; border-color: rgba(0,0,0,0.15); }
+    body.theme-glass .btn-select-cancel:hover { background: rgba(0,0,0,0.12); }
+    body.theme-glass .btn-select-confirm { background: rgba(0,122,255,0.88); color: white; box-shadow: 0 2px 12px rgba(0,122,255,0.3); }
+    body.theme-glass .btn-select-confirm:hover:not(:disabled) { background: rgba(0,108,230,0.95); }
+    body.theme-glass .select-section-title,
+    body.theme-glass .mode-section-title { color: rgba(60,60,67,0.7); }
   </style>
 </head>
 <body>
@@ -861,7 +1172,7 @@
       <div class="features">
         <div class="feature-item">
           <span class="feature-icon">📥</span>
-          <span>支持下载高清 PNG 图片</span>
+          <span>支持下载 PNG / JPEG 图片</span>
         </div>
         <div class="feature-item">
           <span class="feature-icon">📋</span>
@@ -873,7 +1184,23 @@
         </div>
       </div>
 
+      <!-- 图片格式选择 -->
+      <div class="format-row" id="format-row">
+        <span class="format-label">格式</span>
+        <div class="format-btns">
+          <button class="fmt-btn selected" id="fmt-png" data-fmt="png">PNG</button>
+          <button class="fmt-btn" id="fmt-jpeg" data-fmt="jpeg">JPEG</button>
+        </div>
+        <div class="quality-wrap" id="quality-wrap" style="display:none;">
+          <span class="quality-label">质量</span>
+          <input type="range" id="quality-range" min="50" max="100" value="92" step="2" class="quality-range">
+          <span id="quality-val" class="quality-val">92%</span>
+        </div>
+      </div>
+
       <div id="status" class="status"></div>
+
+      <button id="cancel-btn" class="cancel-btn" style="display:none;">✕ 取消截图</button>
     </div>
 
     <!-- 截图完成：操作界面 -->
@@ -933,6 +1260,33 @@
       <div class="infinite-actions">
         <button class="btn-infinite-cancel" id="infinite-cancel-btn">取消</button>
         <button class="btn-infinite-confirm" id="infinite-confirm-btn">🎯 开始截图</button>
+      </div>
+    </div>
+
+    <!-- 可滚动区域选择视图 -->
+    <div id="view-select" style="display:none; flex-direction:column; padding:6px 16px 14px;">
+      <p class="select-section-title">📋 可滚动区域</p>
+      <div class="regions-list" id="regions-list">
+        <!-- 动态填充 -->
+      </div>
+
+      <p class="mode-section-title">📸 截图模式</p>
+      <div class="mode-btns">
+        <div class="mode-btn selected" id="mode-btn-full" data-mode="full">
+          <span class="mode-btn-icon">🖥️</span>
+          <span class="mode-btn-label">整页截图</span>
+          <span class="mode-btn-desc">截取整个网页</span>
+        </div>
+        <div class="mode-btn" id="mode-btn-region" data-mode="region">
+          <span class="mode-btn-icon">🎯</span>
+          <span class="mode-btn-label">区域截图</span>
+          <span class="mode-btn-desc">仅截选中区域</span>
+        </div>
+      </div>
+
+      <div class="select-actions">
+        <button class="btn-select-cancel" id="select-cancel-btn">取消</button>
+        <button class="btn-select-confirm" id="select-confirm-btn">🎯 开始截图</button>
       </div>
     </div>
 

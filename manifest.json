@@ -1,9 +1,10 @@
 {
   "manifest_version": 3,
+  "minimum_chrome_version": "88",
   "name": "ScreenShot - Full Page Capture",
   "short_name": "ScreenShot",
-  "version": "1.1.1",
-  "description": "Capture full-length screenshots of any webpage in one click. Supports PNG download and clipboard copy. Works on dynamic & lazy-loaded pages.",
+  "version": "1.2.0",
+  "description": "Full-page & region screenshot tool. Supports PNG/JPEG, clipboard copy, smart scrollable-area detection, infinite-scroll capture and in-page preview.",
   "permissions": [
     "activeTab",
     "scripting",
@@ -33,5 +34,14 @@
   },
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "commands": {
+    "capture-full-page": {
+      "suggested_key": {
+        "default": "Alt+Shift+S",
+        "mac": "Alt+Shift+S"
+      },
+      "description": "Capture full-page screenshot"
+    }
   }
 }
